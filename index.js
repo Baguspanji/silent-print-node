@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import PDFDocument from "pdfkit";
 import ptp from "pdf-to-printer";
+import cors from "cors";
 
 const app = express();
 const port = 3000;
@@ -11,25 +12,18 @@ const __dirname = path.resolve();
 const pdfPath = path.join(__dirname, 'assets/Example-POS.pdf');
 
 app.use(express.json());
+app.use(cors());
 
-app.get('/:nomor', async (req, res) => {
+app.post('/', async (req, res) => {
 
-    const { nomor } = req.params;
+    const { nomor } = req.body;
 
     await createPdf(nomor);
 
     const options = {
-        "printer": "POS58",
-        "pageSize": "58mmx80mm",
-        "pageOrientation": "portrait",
-        "printBackground": true,
-        "margin": {
-            "top": "0mm",
-            "bottom": "0mm",
-            "left": "0mm",
-            "right": "0mm"
-        },
-        "printSelectionOnly": false,
+        "printer": "POS58 Printer",
+        "paperSize": "A6",
+        "orientation": "portrait",
     };
 
     const localPath = path.join(__dirname, 'assets/Example-POS.pdf');
@@ -49,7 +43,7 @@ const createPdf = async (nomor) => {
     };
 
     const doc = new PDFDocument({
-        size: [160, 180],
+        size: [138, 180],
         margin: 0,
         layout: 'portrait'
     });
@@ -71,11 +65,14 @@ const createPdf = async (nomor) => {
     doc.text(nomor, 0, 58, options);
 
     doc.fontSize(6);
-    doc.text('Bertekad Untuk Memberikan Pelayanan Yang Dinamis, Proporsional dan Profesional', 20, 102, {
+    doc.text('Bertekad Untuk Memberikan Pelayanan Yang Dinamis, Proporsional dan Profesional', 10, 102, {
         align: 'center',
         width: 120
     });
 
+    doc.fontSize(14);
+    doc.text('_______________', 0, 108, options);
+    
     doc.end();
 }
 
