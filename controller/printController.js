@@ -15,7 +15,7 @@ const print = async (req, res) => {
     printer: "POS58 Printer",
     paperSize: "A6",
     orientation: "portrait",
-    copies: 1,
+    copies: 2,
   };
 
   const localPath = path.join(dirname, "assets/Example-POS.pdf");
