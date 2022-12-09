@@ -7,5 +7,5 @@ yarn.lock
 .DS_Store
 .env
 
-/assets/*
-/assets/Example-POS.pdf
+assets/
+assets/Example-POS.pdf
