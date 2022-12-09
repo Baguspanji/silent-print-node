@@ -1,15 +1,18 @@
-import port from "../config/port.js";
+const port = require("../config/port.js");
 
-port.open(function () {
-  port.on("data", function (data) {
-    data = JSON.stringify(data);
-    data = JSON.parse(data);
-    stream = String.fromCharCode
-      .apply(String, data.data)
-      .replace(/\0\r\n/g, "");
-    console.log("Data : " + stream);
+module.exports = (app) => {
+  port.open(function () {
+    port.on("data", function (data) {
+      data = JSON.stringify(data);
+      data = JSON.parse(data);
+      stream = String.fromCharCode
+        .apply(String, data.data)
+        .replace(/\0\r\n/g, "");
+      console.log("Data : " + stream);
+    });
   });
-});
+}
+
 
 const insertAntriandb = async (type) => {
   const db = req.app.locals.db;

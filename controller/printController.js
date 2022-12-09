@@ -1,12 +1,12 @@
-import path from "path";
-import fs from "fs";
-import PDFDocument from "pdfkit";
-import ptp from "pdf-to-printer";
+const path = require('path');
+const fs = require('fs');
+const PDFDocument = require('pdfkit');
+const ptp = require('pdf-to-printer');
 
-const __dirname = path.resolve();
-const pdfPath = path.join(__dirname, "assets/Example-POS.pdf");
+const dirname = path.resolve();
+const pdfPath = path.join(dirname, "assets/Example-POS.pdf");
 
-export const print = async (req, res) => {
+const print = async (req, res) => {
   const { nomor } = req.body;
 
   await createPdf(nomor);
@@ -18,7 +18,7 @@ export const print = async (req, res) => {
     copies: 1,
   };
 
-  const localPath = path.join(__dirname, "assets/Example-POS.pdf");
+  const localPath = path.join(dirname, "assets/Example-POS.pdf");
 
   try {
     await ptp.print(localPath, options);
@@ -77,3 +77,6 @@ const createPdf = async (nomor) => {
 
   doc.end();
 };
+
+
+module.exports = { print }

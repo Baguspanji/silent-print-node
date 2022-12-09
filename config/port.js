@@ -1,13 +1,13 @@
-import SerialPort from "serialport";
+const SerialPort = require("serialport")
 
-const usbPort = "/dev/ttyUSB0";
+const usbPort = "COM1";
 const port = new SerialPort(usbPort, {
   baudRate: 9600,
-  autoOpen: false,
+  autoOpen: true,
 });
 
 port.on("open", () => {
   console.log("Port arduino " + usbPort);
 });
 
-export default port;
+module.exports = port

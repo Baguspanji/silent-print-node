@@ -1,14 +1,14 @@
 {
   "name": "silent_print",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "assert": "^2.0.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "html-pdf": "^3.0.1",
-    "mongodb": "^4.12.1",
+    "mongodb": "^3.6.2",
     "nodemon": "^2.0.20",
     "pdf-to-printer": "^5.4.0",
     "pdfkit": "^0.13.0",
