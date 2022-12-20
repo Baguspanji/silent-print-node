@@ -12,18 +12,11 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-app.post("/", print);
+app.post("/buttonPressed", print);
 
 app.get("/", async (req, res) => {
     const db = req.app.locals.db;
 
-    const antrian = await db.collection("antrian");
-
-    antrian.find({}).toArray(function (err, docs) {
-        assert.equal(err, null);
-        console.log("Found the following records");
-        console.log(docs)
-    });
     res.send("Hello Express");
 });
 

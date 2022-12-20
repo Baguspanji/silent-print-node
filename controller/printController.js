@@ -15,7 +15,7 @@ const print = async (req, res) => {
     printer: "POS58 Printer",
     paperSize: "A6",
     orientation: "portrait",
-    copies: 2,
+    copies: 1,
   };
 
   const localPath = path.join(dirname, "assets/Example-POS.pdf");
@@ -59,7 +59,7 @@ const createPdf = async (nomor) => {
   doc.text("Nomor Antrian", 0, 40, options);
 
   doc.fontSize(40);
-  doc.text(nomor, 0, 58, options);
+  doc.text(nomor + " 00", 0, 58, options);
 
   doc.fontSize(6);
   doc.text(
