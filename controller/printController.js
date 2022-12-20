@@ -1,7 +1,8 @@
-const path = require('path');
-const fs = require('fs');
-const PDFDocument = require('pdfkit');
-const ptp = require('pdf-to-printer');
+const path = require("path");
+const fs = require("fs");
+const PDFDocument = require("pdfkit");
+const ptp = require("pdf-to-printer");
+const moment = require("moment");
 
 const dirname = path.resolve();
 const pdfPath = path.join(dirname, "assets/Example-POS.pdf");
@@ -9,8 +10,14 @@ const pdfPath = path.join(dirname, "assets/Example-POS.pdf");
 const print = async (req, res) => {
   const { nomor } = req.body;
 
-  await createPdf(nomor);
+  await createPdfPOS80(nomor);
+  // await createPdfPOS58(nomor);
+  // await printPdf();
 
+  res.json({ message: "PDF Created" });
+};
+
+const printPdf = async () => {
   const options = {
     printer: "POS58 Printer",
     paperSize: "A6",
@@ -25,11 +32,65 @@ const print = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-
-  res.json({ message: "PDF Created" });
 };
 
-const createPdf = async (nomor) => {
+const createPdfPOS80 = async (nomor) => {
+  const options = {
+    align: "center",
+  };
+
+  const doc = new PDFDocument({
+    size: [230, 230],
+    margin: 0,
+    layout: "portrait",
+  });
+  doc.pipe(fs.createWriteStream(pdfPath));
+
+  doc.fontSize(8);
+  doc.text("DINAS KESEHATAN KABUPATEN PASURUAN", 0, 12, options);
+
+  doc.fontSize(10);
+  doc.text("UOBF PUSKESMAS WONOREJO", 0, 24, options);
+
+  doc.fontSize(14);
+  doc.text("_________________________", 0, 22, options);
+
+  doc.fontSize(6);
+  doc.text(
+    "Jl. Suroyo, Wonorejo, Kec. Wonorejo, Pasuruan, Jawa Timur 67173",
+    0,
+    38,
+    options
+  );
+
+  const date = moment().locale("id").format('dddd, DD MMMM YYYY');
+  doc.fontSize(10);
+  doc.text(date, 0, 52, options);
+
+  doc.fontSize(16);
+  doc.text("Nomor Antrian", 0, 64, options);
+
+  doc.fontSize(42);
+  doc.text(nomor + " 00", 0, 90, options);
+
+  doc.fontSize(8);
+  doc.text(
+    "Bertekad Untuk Memberikan Pelayanan Yang Dinamis, Proporsional dan Profesional",
+    20,
+    140,
+    {
+      align: "center",
+      width: 200,
+    }
+  );
+
+  doc.fontSize(14);
+  doc.text("_________________________", 0, 154, options);
+
+  doc.end();
+};
+
+const createPdfPOS58 = async (nomor) => {
   const options = {
     align: "center",
   };
@@ -78,5 +139,4 @@ const createPdf = async (nomor) => {
   doc.end();
 };
 
-
-module.exports = { print }
+module.exports = { print };
