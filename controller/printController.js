@@ -12,15 +12,15 @@ const print = async (req, res) => {
 
   await createPdfPOS80(nomor);
   // await createPdfPOS58(nomor);
-  // await printPdf();
+  await printPdf();
 
   res.json({ message: "PDF Created" });
 };
 
 const printPdf = async () => {
   const options = {
-    printer: "POS58 Printer",
-    paperSize: "A6",
+    printer: "POS-80",
+    // paperSize: "A6",
     orientation: "portrait",
     copies: 1,
   };
@@ -40,7 +40,7 @@ const createPdfPOS80 = async (nomor) => {
   };
 
   const doc = new PDFDocument({
-    size: [230, 230],
+    size: [210, 210],
     margin: 0,
     layout: "portrait",
   });
@@ -53,7 +53,7 @@ const createPdfPOS80 = async (nomor) => {
   doc.text("UOBF PUSKESMAS WONOREJO", 0, 24, options);
 
   doc.fontSize(14);
-  doc.text("_________________________", 0, 22, options);
+  doc.text("_______________________", 0, 22, options);
 
   doc.fontSize(6);
   doc.text(
@@ -76,7 +76,7 @@ const createPdfPOS80 = async (nomor) => {
   doc.fontSize(8);
   doc.text(
     "Bertekad Untuk Memberikan Pelayanan Yang Dinamis, Proporsional dan Profesional",
-    20,
+    10,
     140,
     {
       align: "center",
@@ -85,7 +85,7 @@ const createPdfPOS80 = async (nomor) => {
   );
 
   doc.fontSize(14);
-  doc.text("_________________________", 0, 154, options);
+  doc.text("_______________________", 0, 154, options);
 
   doc.end();
 };
@@ -129,7 +129,7 @@ const createPdfPOS58 = async (nomor) => {
     102,
     {
       align: "center",
-      width: 120,
+      width: 90,
     }
   );
 
