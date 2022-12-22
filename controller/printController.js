@@ -4,17 +4,22 @@ const PDFDocument = require("pdfkit");
 const ptp = require("pdf-to-printer");
 const moment = require("moment");
 
+const Str = require('@supercharge/strings')
+
 const dirname = path.resolve();
 const pdfPath = path.join(dirname, "assets/Example-POS.pdf");
 
 const print = async (req, res) => {
   var antrianData = await antrian(req);
 
-  var antrianNomor = antrianData.type + ' ' + (antrianData.urut < 10 ? '0' + antrianData.urut : antrianData.urut);
+  var antrianNomor =
+    antrianData.type +
+    " " +
+    (antrianData.urut < 10 ? "0" + antrianData.urut : antrianData.urut);
 
   await createPdfPOS80(antrianNomor);
   // await createPdfPOS58(nomor);
-  await printPdf();
+  // await printPdf();
 
   res.json({ message: "PDF Created" });
 };
@@ -25,7 +30,7 @@ const printPdf = async () => {
     paperSize: "A5",
     orientation: "portrait",
     copies: 1,
-    scale: "noscale"
+    scale: "noscale",
   };
 
   const localPath = path.join(dirname, "assets/Example-POS.pdf");
@@ -66,7 +71,7 @@ const createPdfPOS80 = async (nomor) => {
     options
   );
 
-  const date = moment().locale("id").format('dddd, DD MMMM YYYY');
+  const date = moment().locale("id").format("dddd, DD MMMM YYYY");
   doc.fontSize(10);
   doc.text(date, 0, 52, options);
 
@@ -155,8 +160,9 @@ const antrian = async (req) => {
     .toArray();
 
   const antrian = await collection.insertOne({
+    _id: Str.random(50),
     type: type,
-    urut: lastAntrian[0].urut + 1,
+    urut: lastAntrian[0] != null ? lastAntrian[0].urut + 1 : 1,
     status: "loket",
     skip: false,
     created_at: moment().format("YYYY-MM-DD HH:mm:ss"),

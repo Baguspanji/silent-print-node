@@ -15,8 +15,6 @@ app.use(cors());
 app.post("/buttonPressed", print);
 
 app.get("/", async (req, res) => {
-    const db = req.app.locals.db;
-
     res.send("Hello Express");
 });
 
