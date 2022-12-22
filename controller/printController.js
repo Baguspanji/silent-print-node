@@ -8,9 +8,11 @@ const dirname = path.resolve();
 const pdfPath = path.join(dirname, "assets/Example-POS.pdf");
 
 const print = async (req, res) => {
-  const { nomor } = req.body;
+  var antrianData = await antrian(req);
 
-  await createPdfPOS80(nomor);
+  var antrianNomor = antrianData.type + ' ' + (antrianData.urut < 10 ? '0' + antrianData.urut : antrianData.urut);
+
+  await createPdfPOS80(antrianNomor);
   // await createPdfPOS58(nomor);
   await printPdf();
 
@@ -20,9 +22,10 @@ const print = async (req, res) => {
 const printPdf = async () => {
   const options = {
     printer: "POS-80",
-    // paperSize: "A6",
+    paperSize: "A5",
     orientation: "portrait",
     copies: 1,
+    scale: "noscale"
   };
 
   const localPath = path.join(dirname, "assets/Example-POS.pdf");
@@ -71,7 +74,7 @@ const createPdfPOS80 = async (nomor) => {
   doc.text("Nomor Antrian", 0, 64, options);
 
   doc.fontSize(42);
-  doc.text(nomor + " 00", 0, 90, options);
+  doc.text(nomor, 0, 90, options);
 
   doc.fontSize(8);
   doc.text(
@@ -120,7 +123,7 @@ const createPdfPOS58 = async (nomor) => {
   doc.text("Nomor Antrian", 0, 40, options);
 
   doc.fontSize(40);
-  doc.text(nomor + " 00", 0, 58, options);
+  doc.text(nomor, 0, 58, options);
 
   doc.fontSize(6);
   doc.text(
@@ -137,6 +140,33 @@ const createPdfPOS58 = async (nomor) => {
   doc.text("_______________", 0, 108, options);
 
   doc.end();
+};
+
+const antrian = async (req) => {
+  const type = req.body.nomor;
+
+  const db = req.app.locals.db;
+  const collection = db.collection("antrian");
+
+  const lastAntrian = await collection
+    .find({ type: type })
+    .sort({ urut: -1 })
+    .limit(1)
+    .toArray();
+
+  const antrian = await collection.insertOne({
+    type: type,
+    urut: lastAntrian[0].urut + 1,
+    status: "loket",
+    skip: false,
+    created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+  });
+
+  if (antrian.insertedCount === 1) {
+    return antrian.ops[0];
+  } else {
+    return;
+  }
 };
 
 module.exports = { print };
