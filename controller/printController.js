@@ -19,7 +19,7 @@ const print = async (req, res) => {
 
   await createPdfPOS80(antrianNomor);
   // await createPdfPOS58(nomor);
-  // await printPdf();
+  await printPdf();
 
   res.json({ message: "PDF Created" });
 };
@@ -29,7 +29,7 @@ const printPdf = async () => {
     printer: "POS-80",
     paperSize: "A5",
     orientation: "portrait",
-    copies: 1,
+    copies: 2,
     scale: "noscale",
   };
 
@@ -154,7 +154,13 @@ const antrian = async (req) => {
   const collection = db.collection("antrian");
 
   const lastAntrian = await collection
-    .find({ type: type })
+    .find({ 
+      type: type,
+      createdAt: {
+        $gte: moment().format("YYYY-MM-DD 00:00:00"),
+        $lte: moment().format("YYYY-MM-DD 23:59:59"),
+      },
+    })
     .sort({ urut: -1 })
     .limit(1)
     .toArray();
@@ -165,7 +171,7 @@ const antrian = async (req) => {
     urut: lastAntrian[0] != null ? lastAntrian[0].urut + 1 : 1,
     status: "loket",
     skip: false,
-    created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+    createdAt: moment().format("YYYY-MM-DD HH:mm:ss"),
   });
 
   if (antrian.insertedCount === 1) {
