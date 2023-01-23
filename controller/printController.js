@@ -10,16 +10,9 @@ const dirname = path.resolve();
 const pdfPath = path.join(dirname, "assets/Example-POS.pdf");
 
 const print = async (req, res) => {
-  var antrianData = await antrian(req);
-
-  var antrianNomor =
-    antrianData.type +
-    " " +
-    (antrianData.urut < 10 ? "0" + antrianData.urut : antrianData.urut);
-
-  await createPdfPOS80(antrianNomor);
+  await createPdfPOS80(req);
   // await createPdfPOS58(nomor);
-  await printPdf();
+  // await printPdf();
 
   res.json({ message: "PDF Created" });
 };
@@ -27,9 +20,9 @@ const print = async (req, res) => {
 const printPdf = async () => {
   const options = {
     printer: "POS-80",
-    paperSize: "A5",
+    paperSize: "A6",
     orientation: "portrait",
-    copies: 2,
+    copies: 1,
     scale: "noscale",
   };
 
@@ -42,7 +35,9 @@ const printPdf = async () => {
   }
 };
 
-const createPdfPOS80 = async (nomor) => {
+const createPdfPOS80 = async (req) => {
+  var body = req.body;
+
   const options = {
     align: "center",
   };
@@ -55,7 +50,7 @@ const createPdfPOS80 = async (nomor) => {
   doc.pipe(fs.createWriteStream(pdfPath));
 
   doc.fontSize(8);
-  doc.text("DINAS KESEHATAN KABUPATEN PASURUAN", 0, 12, options);
+  doc.text(req.store_name, 0, 12, options);
 
   doc.fontSize(10);
   doc.text("UOBF PUSKESMAS WONOREJO", 0, 24, options);
@@ -79,7 +74,7 @@ const createPdfPOS80 = async (nomor) => {
   doc.text("Nomor Antrian", 0, 64, options);
 
   doc.fontSize(42);
-  doc.text(nomor, 0, 90, options);
+  doc.text('', 0, 90, options);
 
   doc.fontSize(8);
   doc.text(
@@ -145,40 +140,6 @@ const createPdfPOS58 = async (nomor) => {
   doc.text("_______________", 0, 108, options);
 
   doc.end();
-};
-
-const antrian = async (req) => {
-  const type = req.body.nomor;
-
-  const db = req.app.locals.db;
-  const collection = db.collection("antrian");
-
-  const lastAntrian = await collection
-    .find({ 
-      type: type,
-      createdAt: {
-        $gte: moment().format("YYYY-MM-DD 00:00:00"),
-        $lte: moment().format("YYYY-MM-DD 23:59:59"),
-      },
-    })
-    .sort({ urut: -1 })
-    .limit(1)
-    .toArray();
-
-  const antrian = await collection.insertOne({
-    _id: Str.random(50),
-    type: type,
-    urut: lastAntrian[0] != null ? lastAntrian[0].urut + 1 : 1,
-    status: "loket",
-    skip: false,
-    createdAt: moment().format("YYYY-MM-DD HH:mm:ss"),
-  });
-
-  if (antrian.insertedCount === 1) {
-    return antrian.ops[0];
-  } else {
-    return;
-  }
 };
 
 module.exports = { print };
