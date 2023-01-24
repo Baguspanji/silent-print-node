@@ -1,0 +1,53 @@
+<?php
+
+class Item
+{
+    private $name;
+    private $qty;
+    private $price;
+    private $desc;
+    private $currency = '';
+
+    public function __construct($name, $qty, $price, $desc = '')
+    {
+        $this->name = $name;
+        $this->qty = $qty;
+        $this->price = $price;
+        $this->desc = $desc;
+    }
+
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+    }
+
+    public function getQty()
+    {
+        return $this->qty;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function getDesc()
+    {
+        return $this->desc;
+    }
+
+    public function __toString()
+    {
+        $right_cols = 10;
+        $left_cols = 20;
+
+        $item_price = $this->currency . number_format($this->price, 0, ',', '.');
+        $item_subtotal = $this->currency . number_format($this->price * $this->qty, 0, ',', '.');
+
+        $print_name = str_pad($this->name, 16);
+        $print_priceqty = str_pad($this->desc . ' x ' . $item_price, $left_cols);
+        $print_subtotal = str_pad($item_subtotal, $right_cols, ' ', STR_PAD_LEFT);
+
+        return "$print_name\n$print_priceqty$print_subtotal\n";
+    }
+}
