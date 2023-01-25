@@ -226,7 +226,7 @@ class ReceiptPrinter
             $total = $this->getPrintableSummary('Total Harga', $this->grandtotal);
             $amountPaid = $this->getPrintableSummary('Total Bayar', $this->amount_paid);
             $amountBack = $this->getPrintableSummary('Total Kembali', $this->amount_paid - $this->request_amount);
-            $footer = "Barang yang sudah dibeli tidak dapat ditukat / dikembalikan.!\n";
+            $footer = "Barang yang sudah dibeli tidak dapat ditukar / dikembalikan.!\n";
             // Init printer settings
             $this->printer->initialize();
             $this->printer->selectPrintMode();
